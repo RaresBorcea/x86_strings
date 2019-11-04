@@ -1,18 +1,17 @@
 extern print_line
-global mystery1:function
-global mystery2:function
-global mystery3:function
-global mystery4:function
-global mystery7:function
-global mystery9:function
+global strlen:function
+global strchr:function
+global str_equals:function
+global strcpy:function
+global str_to_int:function
+global print_strlines:function
 
 section .text
-; MYSTERY1
+
 ; Description: returns the length of a string
 ; @arg: char[] s - the string to be analyzed
 ; Return value: int length
-; Suggested name: strlen
-mystery1:
+strlen:
     push   ebp
     mov    ebp,esp
     mov    al, 0
@@ -27,20 +26,18 @@ mystery1:
     leave  
     ret 
 
-; MYSTERY2
 ; Description: returns the position of a character in a string
 ; @arg1: char[] s - the string in which it searches the char
 ; @arg2: char c - the searched character
 ; Return value: int position if found, -1 otherwise
-; Suggested name: strchr
-mystery2:
+strchr:
     push   ebp
     mov    ebp,esp
     mov    edi,DWORD [ebp+0x8]
     mov    dl,BYTE [edi]
     mov    eax,0xffffffff
     test   dl,dl
-    jz     mystery2_l2
+    jz     strchr_l2
     mov    al,BYTE [ebp+0xc]
     sub    ecx,ecx
     not    ecx
@@ -48,18 +45,16 @@ mystery2:
     not    ecx
     dec    ecx
     mov    eax,ecx
-mystery2_l2:
+strchr_l2:
     leave  
     ret 
 
-; MYSTERY3
 ; Description: checks if two strings are identical on a given length
 ; @arg1: char[] s1 - the first string
 ; @arg2: char[] s2 - the second string
 ; @arg3: int length - the given length
 ; Return value: 0 if identical, 1 otherwise
-; Suggested name: str_equals
-mystery3:
+str_equals:
     push   ebp
     mov    ebp,esp
     mov    eax,0x1
@@ -67,20 +62,18 @@ mystery3:
     mov    edi,DWORD [ebp+0xc]
     mov    ecx,DWORD [ebp+0x10]
     repe   cmpsb
-    jnz    mystery3_l2
+    jnz    str_equals_l2
     sub    eax,eax
-mystery3_l2:
+str_equals_l2:
     leave  
     ret  
 
-; MYSTERY4
 ; Description: copies length characters from source string to destination string
 ; @arg1: char[] s1 - destination string
 ; @arg2: char[] s2 - source string
 ; @arg3: int length - the given length
 ; Return value: void
-; Suggested name: strcpy
-mystery4:
+strcpy:
     push   ebp
     mov    ebp,esp
     mov    edi,DWORD [ebp+0x8]
@@ -90,12 +83,10 @@ mystery4:
     leave  
     ret   
 
-; MYSTERY7
 ; Description: converts, if possible, a string to the corresponding integer
 ; @arg: int a - the integer to be converted
 ; Return value: int converted value, -1 otherwise
-; Suggested name: str_to_int
-mystery7:
+str_to_int:
     push   ebp
     mov    ebp,esp
     sub    eax,eax
@@ -104,34 +95,32 @@ mystery7:
     mov    esi,0xa
     mov    edi,DWORD [ebp+0x8]
     mov    bl,BYTE [edi]
-mystery7_l1:
+str_to_int_l1:
     cmp    bl,0x30
-    jl     mystery7_l3
+    jl     str_to_int_l3
     cmp    bl,0x39
-    jg     mystery7_l3
+    jg     str_to_int_l3
     sub    bl,0x30
     mul    esi
     add    eax,ebx
     inc    edi
     mov    bl,BYTE [edi]
     test   bl,bl
-    jnz    mystery7_l1
-    jmp    mystery7_l2
-mystery7_l3:
+    jnz    str_to_int_l1
+    jmp    str_to_int_l2
+str_to_int_l3:
     mov    eax,0xffffffff
-mystery7_l2:
+str_to_int_l2:
     leave  
     ret
 
-; MYSTERY9
 ; Description: prints from text lines which contain a given string
 ; @arg1: char[] text - the text in which we search for the string
 ; @arg2: int start - the text position where we begin the search
 ; @arg3: int end - the text position where we end the search
 ; @arg4: char[] string - the string we search for
 ; Return value: void
-; Suggested name: print_strlines
-mystery9:
+print_strlines:
     push   ebp
     mov    ebp,esp
     mov    edx,DWORD [ebp+0x14]
@@ -140,25 +129,25 @@ mystery9:
     dec    esi
     mov    edi,DWORD [ebp+0x8]
     mov    ebx,esi
-mystery9_l2:
+print_strlines_l2:
     inc    ebx
     cmp    ebx,DWORD [ebp+0x10]
-    jae    mystery9_l1
+    jae    print_strlines_l1
     cmp    BYTE [edi+ebx],0xa
-    jne    mystery9_l2
+    jne    print_strlines_l2
     sub    eax,eax
     inc    esi
     mov    DWORD [ebp-0x4],esi
-mystery9_l3:
+print_strlines_l3:
     mov    cl,BYTE [edi+esi]
     cmp    cl,0xa
-    je     mystery9_l4
+    je     print_strlines_l4
     cmp    cl,BYTE [edx+eax]
-    jne    mystery9_l5
+    jne    print_strlines_l5
     inc    esi
     inc    eax
     cmp    BYTE [edx+eax],0
-    jne    mystery9_l3
+    jne    print_strlines_l3
     mov    esi,DWORD [ebp-0x4]
     push   edx
     push   edi
@@ -168,13 +157,13 @@ mystery9_l3:
     pop    edi
     pop    edi
     pop    edx
-mystery9_l4:
+print_strlines_l4:
     mov    esi,ebx
-    jmp    mystery9_l2
-mystery9_l5:
+    jmp    print_strlines_l2
+print_strlines_l5:
     sub    eax,eax
     inc    esi
-    jmp    mystery9_l3
-mystery9_l1:
+    jmp    print_strlines_l3
+print_strlines_l1:
     leave  
     ret
